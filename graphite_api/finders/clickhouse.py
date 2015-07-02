@@ -19,14 +19,13 @@ class ClickHouseLeafNode(LeafNode):
     __fetch_multi__ = 'clickhouse'
 
 class ClickHouseReader(object):
-    __slots__ = ('path', 'schema', 'periods', 'storage', 'request_key')
+    __slots__ = ('path', 'config', 'schema', 'periods', 'storage', 'request_key')
 
     def __init__(self, path, config, request_key):
         self.config = config
         self.path = path
         self.request_key = request_key
         self.storage = config['clickhouse'].get('server', '127.0.0.1')
-        # Achtung! storage schema, periods are initialized while search as global
         return
 
     def fetch(self, start_time, end_time):
@@ -95,10 +94,10 @@ class ClickHouseFinder(object):
         # init storage schema 
         global schema
         global periods
-        self.schema = {}
-        self.periods = []
+        schema = {}
+        periods = []
         schema_file = config['clickhouse'].get('schema', '/etc/cacher/storage_schema.ini')
-        self.schema, self.periods = load_storage_schema(schema_file)
+        schema, periods = load_storage_schema(schema_file)
 
 
     def find_nodes(self, query):
@@ -107,7 +106,7 @@ class ClickHouseFinder(object):
         self.search_query = q
         self.request_key = md5("%s:%f" % (q, time.time())).hexdigest()
         # search for metrics
-        backend = config['clickhouse'].get('search', '127.0.0.1')
+        backend = self.config['clickhouse'].get('search', '127.0.0.1')
         metrics = mstree_search(q, backend)
         for path in metrics:
             # check if it is a branch or leaf
