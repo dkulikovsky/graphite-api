@@ -7,7 +7,7 @@ import ConfigParser
 
 from hashlib import md5
 from structlog import get_logger
-from graphite.conductor import Conductor
+from graphite_api.conductor import Conductor
 from ..intervals import Interval, IntervalSet
 from ..node import BranchNode, LeafNode
 
