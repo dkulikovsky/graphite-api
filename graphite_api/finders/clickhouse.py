@@ -27,27 +27,17 @@ class ClickHouseLeafNode(LeafNode):
     __fetch_multi__ = 'clickhouse'
 
 class ClickHouseReader(object):
-    __slots__ = ('path','schema', 'periods', 'multi', 'pathExpr', 'storage', 'request_key')
+    __slots__ = ('path', 'schema', 'periods', 'storage')
 
-    def __init__(self, path, storage="", multi=0, reqkey=""):
-        self.storage = storage
-        if multi:
-            self.multi = 1
-            self.pathExpr =  path
-        else:
-            self.multi = 0
-            self.path = path
+    def __init__(self, config):
+        self.storage = config['clickhouse'].get('server', '127.0.0.1')
+        # init storage schema 
         self.schema = {}
         self.periods = []
         self.load_storage_schema()
-        self.request_key = reqkey
-        try:
-            self.storage = "".join(getattr(settings, 'CLICKHOUSE_SERVER'))
-        except:
-            self.storage = "127.0.0.1"
 
     def load_storage_schema(self):
-        conf = "/etc/cacher/storage_schema.ini"
+        conf = config['clickhouse'].get('schema', '/etc/cacher/storage_schema.ini')
         config = ConfigParser.ConfigParser()
         try:
             config.read(conf)
