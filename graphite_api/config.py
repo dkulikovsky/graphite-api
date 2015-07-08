@@ -163,6 +163,13 @@ def configure(app):
         else:
             Sentry(app, dsn=config['sentry_dsn'])
 
+    # try to get clickhouse variables from env
+    if 'clickhouse' not in config:
+        config['clickhouse'] = {}
+        config['clickhouse']['server'] = os.environ.get('CLICKHOUSE_SERVER_SERVICE_HOST', '127.0.0.1')
+        config['clickhouse']['search'] = os.environ.get('CLICKHOUSE_SEARCH_SERVICE_HOST', '127.0.0.1')
+        config['clickhouse']['schema'] = '/etc/storage_schema.ini'
+
     app.wsgi_app = TrailingSlash(CORS(app.wsgi_app,
                                       config.get('allowed_origins')))
 
