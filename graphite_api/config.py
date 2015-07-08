@@ -102,8 +102,8 @@ def configure(app):
     # try to get clickhouse variables from env
     if 'clickhouse' not in config:
         config['clickhouse'] = {}
-        config['clickhouse']['server'] = os.environ.get('CLICKHOUSE_SERVER_SERVICE_HOST', '127.0.0.1')
-        config['clickhouse']['search'] = os.environ.get('CLICKHOUSE_SEARCH_SERVICE_HOST', '127.0.0.1')
+        config['clickhouse']['server'] = os.environ.get('GRAPHITE_CLICKHOUSE_SERVICE_HOST', '127.0.0.1')
+        config['clickhouse']['search'] = os.environ.get('METRICSEARCH_SERVICE_HOST', '127.0.0.1')
         config['clickhouse']['schema'] = '/etc/storage_schema.ini'
         logger.info("set clickhouse config: server=%s, search=%s" % (config['clickhouse']['server'], config['clickhouse']['search']))
     else:
