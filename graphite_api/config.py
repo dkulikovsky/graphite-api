@@ -105,9 +105,9 @@ def configure(app):
         config['clickhouse']['server'] = os.environ.get('CLICKHOUSE_SERVER_SERVICE_HOST', '127.0.0.1')
         config['clickhouse']['search'] = os.environ.get('CLICKHOUSE_SEARCH_SERVICE_HOST', '127.0.0.1')
         config['clickhouse']['schema'] = '/etc/storage_schema.ini'
-        warnings.warn("set clickhouse config")
+        logger.info("set clickhouse config: server=%s, search=%s" % (config['clickhouse']['server'], config['clickhouse']['search']))
     else:
-        warnings.warn("doing nothing!")
+        logger.info("no graphite settings in env")
 
     if config['carbon'] is not None:
         # carbon section having a bunch of values, keep default ones if
@@ -172,13 +172,6 @@ def configure(app):
                           "install raven[flask]`.")
         else:
             Sentry(app, dsn=config['sentry_dsn'])
-
-    # try to get clickhouse variables from env
-    if 'clickhouse' not in config:
-        config['clickhouse'] = {}
-        config['clickhouse']['server'] = os.environ.get('GRAPHITE_CLICKHOUSE_SERVICE_HOST', '127.0.0.1')
-        config['clickhouse']['search'] = os.environ.get('METRICSEARCH_SERVICE_HOST', '127.0.0.1')
-        config['clickhouse']['schema'] = '/etc/storage_schema.ini'
 
     app.wsgi_app = TrailingSlash(CORS(app.wsgi_app,
                                       config.get('allowed_origins')))

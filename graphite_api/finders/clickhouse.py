@@ -26,6 +26,7 @@ class ClickHouseReader(object):
         self.path = path
         self.request_key = request_key
         self.storage = config['clickhouse'].get('server', '127.0.0.1')
+        logger.info("got storage in Reader = %s" % self.storage)
         return
 
     def fetch(self, start_time, end_time):
@@ -91,6 +92,7 @@ class ClickHouseFinder(object):
     def __init__(self, config=None):
         self.config = config
         self.storage = config['clickhouse'].get('server', '127.0.0.1')
+        logger.info("got storage in Finder = %s" % self.storage)
         # init storage schema 
         global schema
         global periods
@@ -107,6 +109,7 @@ class ClickHouseFinder(object):
         self.request_key = md5("%s:%f" % (q, time.time())).hexdigest()
         # search for metrics
         backend = self.config['clickhouse'].get('search', '127.0.0.1')
+        logger.info("got search in Finder= %s" % backend)
         metrics = mstree_search(q, backend)
         for path in metrics:
             # check if it is a branch or leaf
