@@ -132,7 +132,7 @@ class ClickHouseFinder(object):
             sorted_data = [ filled_data[i] for i in sorted(filled_data.keys()) ]
             result[path] = sorted_data
         logger.info("DEBUG:multi_fetch:[%s] all in in %.3f = [ fetch:%s, sort:%s ] path = %s" %\
-		 (self.request_key, (time.time() - start_t_g), start_t - start_t_g, (time.time() - start_t), self.pathExpr))
+		 (self.request_key, (time.time() - start_t_g), start_t - start_t_g, (time.time() - start_t), self.search_query))
         return time_info, result
 
     def get_multi_data(self, metrics, start_time, end_time):
@@ -161,7 +161,7 @@ class ClickHouseFinder(object):
             dp_val = arr[2].strip()
             data.setdefault(path, {})[dp_ts] = float(dp_val)
         fetch_time = time.time() - start_t
-        logger.info("DEBUG:get_multi_data:[%s] fetch = %s, parse = %s, path = %s, num = %s" % (self.request_key, fetch_time, time.time() - start_t, self.path, num))
+        logger.info("DEBUG:get_multi_data:[%s] fetch = %s, parse = %s, path = %s, num = %s" % (self.request_key, fetch_time, time.time() - start_t, query, num))
         return data, time_step
 
 
@@ -169,6 +169,7 @@ class ClickHouseFinder(object):
         coeff, agg = get_coeff(self.search_query, stime, etime)
         query = ""
         num = len(metrics)
+        metrics = [ "'%s'" % i for i in metrics ]
         path_expr = "Path IN ( %s )" % ", ".join(metrics)
         if agg == 0:
             query = """SELECT Path, Time, Value FROM graphite_d WHERE %s\
