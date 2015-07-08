@@ -99,6 +99,16 @@ def configure(app):
     for key, value in list(default_conf.items()):
         config.setdefault(key, value)
 
+    # try to get clickhouse variables from env
+    if 'clickhouse' not in config:
+        config['clickhouse'] = {}
+        config['clickhouse']['server'] = os.environ.get('CLICKHOUSE_SERVER_SERVICE_HOST', '127.0.0.1')
+        config['clickhouse']['search'] = os.environ.get('CLICKHOUSE_SEARCH_SERVICE_HOST', '127.0.0.1')
+        config['clickhouse']['schema'] = '/etc/storage_schema.ini'
+        warnings.warn("set clickhouse config")
+    else:
+        warnings.warn("doing nothing!")
+
     if config['carbon'] is not None:
         # carbon section having a bunch of values, keep default ones if
         # they're not provided in an overriden config.
